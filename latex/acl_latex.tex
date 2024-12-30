@@ -118,6 +118,13 @@ These instructions should be used both for papers submitted for review and for f
 
 \section{Introduction}
 
+% 随着算力资源的日益紧张和推理速度的实时需求，量化模型成为了众多企业和个人应用的首选。众多量化算法不断推陈出新，在实验中取得了非常不错的成绩，然而量化模型的在实际中的应用始终未能取得足够信任和推广，这也是为什么模型在发布时往往会推出大中小多种尺寸的模型，尽管量化算法宣称量化的大模型相比于小模型性能更优（如14B模型的8bit量化版本和7B模型的16bit版本空间占用接近），但是小模型的使用范围还是要明显高于量化后大尺寸模型。即量化模型的实际效果还是大打折扣，我们实验发现量化模型的对话能力、推理能力往往受损严重，几乎难以支撑长文本或者多轮次的对话需求。由此引出的问题是，量化模型的评价指标benchmark and metrics究竟能否如实反映模型的实际应用能力？PPL和multi-choices accuracy可能是片面的甚至是误导的。
+% 我们设置了面向真实场景的长文本和多轮对话、逻辑推理能力，发现量化模型的性能相比于未量化版本退化严重，尽管这些模型在PPL和accuracy上表现很高。
+% 今年以来，强推理模型的出现大大增强了模型在逻辑推理和长文本输出的能力，进而也提升了模型的反思和校验能力，基于ReFT对o1进行复现的工作层出不穷。为量化模型的能力恢复提供了一个很好的借鉴思路。
+
+\section{Related Work}
+% 相关工作就分为两部分，一个是量化算法研究，一个是ReFT相关的研究。之后对两者进行总结，重点就是量化算法的评估指标并不准确，ReFT作为数学推理的模型，基于token-wise的评价，方法在于数学题不需要对步骤进行整体评估，即不需要Reward model，直接通过对当前步骤输出进行提取，根据正确与否直接进行赋分即可。但是对话和长文本显然不行，而且ReFT这种token-wise的方法存在慢启动问题，效率较低。
+
 \textbf{Quantization Survey}: Evaluating Quantized Large Language Models \cite{DBLP:conf/icml/LiNWLSYDY024}, 
 Give me BF16 or give me death \cite{kurtic2024give},
 A Comprehensive Evaluation of Quantization Strategies for Large Language Models \cite{jin-etal-2024-comprehensive}
@@ -129,14 +136,38 @@ Can perplexity reflect large language model’s ability in long text understandi
 
 \textbf{Quantization Methods}: GPTQ \cite{frantar2022gptq}, QLoRA \cite{DBLP:conf/nips/DettmersPHZ23}, SmoothQuant \cite{DBLP:conf/icml/XiaoLSWDH23}, AWQ \cite{DBLP:conf/mlsys/0002TTYCWXDG024}, OWQ \cite{DBLP:conf/aaai/LeeJKKP24}, OmniQuant \cite{DBLP:conf/iclr/ShaoC0XZLZ00024}, LRQuant\cite{zhao-etal-2024-lrquant},SpQR \cite{DBLP:conf/iclr/DettmersSEKFABH24},LLM.int8() \cite{dettmers2022gpt3}
 
-\textbf{Reinforcement learning}: Improving Conversational Abilities of Quantized Large Language Models via Direct Preference Alignment \cite{lee-etal-2024-improving-conversational}, REFT: Reasoning with REinforced Fine-Tuning \cite{trung-etal-2024-reft},
-Understanding Reinforcement Learning-Based Fine-Tuning of Diffusion Models: A Tutorial and Review \cite{uehara2024understanding}
-
 \begin{itemize}
     \item Mixed Precision Quantization. (1) Magnitude-based. (2) Saliency-based.
     \item Ultra low-bit Quantization.
 \end{itemize}
 
+\textbf{Reinforcement learning}: Improving Conversational Abilities of Quantized Large Language Models via Direct Preference Alignment \cite{lee-etal-2024-improving-conversational}, REFT: Reasoning with REinforced Fine-Tuning \cite{trung-etal-2024-reft}, Let's verify step by step \cite{DBLP:conf/iclr/LightmanKBEBLLS24},
+Understanding Reinforcement Learning-Based Fine-Tuning of Diffusion Models: A Tutorial and Review \cite{uehara2024understanding}
+
+
+\section{Preliminary}
+
+% 这一章节主要是做预实验，即对之前的量化算法进行测试，用于发现本文在Introduction上提出的现象和解释问题所在。用于引出接下来的改进算法和完整的验证实验。实验包括（1）之前的量化算法在PPL和accuracy上的表现；（2）量化算法在推理、对话、长文本上的表现。
+% 出现的performance discrepancy应该是量化模型在旧的评价体系中与未量化版本相近，但是实际效果旧大大折扣。
+% 量化模型的能力校正一般是通过校准数据集进行补充的指令微调，这个步骤对于模型的PPL下降至关重要，但是模型却并没有进行对话推理能力的补训，这也就是导致模型能力下降的主要原因。为此，引出我们使用改进的QDPO或者ReFT对量化模型进行补充训练。
+
+\section{Methods}
+
+\section{experiments}
+
+\section*{Limitations}
+
+
+% Bibliography entries for the entire Anthology, followed by custom entries
+\bibliography{anthology,custom}
+% Custom bibliography entries only
+% \bibliography{custom}
+
+\clearpage
+\appendix
+
+\section{Example Appendix}
+\label{sec:appendix}
 
 These instructions are for authors submitting papers to *ACL conferences using \LaTeX. They are not self-contained. All authors must follow the general instructions for *ACL proceedings,\footnote{\url{http://acl-org.github.io/ACLPUB/formatting.html}} and this document contains additional instructions for the \LaTeX{} style files.
 
@@ -370,19 +401,6 @@ and earlier ACL and EACL formats written by several people, including
 John Chen, Henry S. Thompson and Donald Walker.
 Additional elements were taken from the formatting instructions of the \emph{International Joint Conference on Artificial Intelligence} and the \emph{Conference on Computer Vision and Pattern Recognition}.
 
-\section*{Limitations}
 
-
-% Bibliography entries for the entire Anthology, followed by custom entries
-\bibliography{anthology,custom}
-% Custom bibliography entries only
-% \bibliography{custom}
-
-\appendix
-
-\section{Example Appendix}
-\label{sec:appendix}
-
-This is an appendix.
 
 \end{document}
